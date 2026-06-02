@@ -5,12 +5,20 @@ const toast = document.getElementById("toast");
 const installBtn = document.getElementById("installBtn");
 
 let scale = 1;
+let minScale = 1;
 let x = 0;
 let y = 0;
 let dragging = false;
 let startX = 0;
 let startY = 0;
 let deferredPrompt = null;
+
+function showToast(message) {
+  toast.textContent = message;
+  toast.classList.add("show");
+  clearTimeout(showToast.timer);
+  showToast.timer = setTimeout(() => toast.classList.remove("show"), 2500);
+}
 
 function updateMap() {
   mapLayer.style.transformOrigin = "0 0";
@@ -23,19 +31,32 @@ function fitMap() {
   const iw = map.naturalWidth;
   const ih = map.naturalHeight;
 
-  if (!iw || !ih) return;
+  if (!vw || !vh || !iw || !ih) return;
 
-  scale = Math.min(vw / iw, vh / ih);
+  map.style.width = iw + "px";
+  map.style.height = ih + "px";
+  mapLayer.style.width = iw + "px";
+  mapLayer.style.height = ih + "px";
+
+  minScale = Math.min(vw / iw, vh / ih);
+  scale = minScale;
+
   x = (vw - iw * scale) / 2;
   y = (vh - ih * scale) / 2;
 
   updateMap();
 }
 
-function zoomTo(nx, ny, ns, label) {
-  scale = ns;
-  x = nx;
-  y = ny;
+function zoomToPercent(px, py, newScale, label) {
+  const vw = viewport.clientWidth;
+  const vh = viewport.clientHeight;
+  const iw = map.naturalWidth;
+  const ih = map.naturalHeight;
+
+  scale = Math.max(newScale, minScale);
+  x = vw / 2 - iw * px * scale;
+  y = vh / 2 - ih * py * scale;
+
   updateMap();
   showToast(label);
 }
@@ -43,11 +64,12 @@ function zoomTo(nx, ny, ns, label) {
 map.addEventListener("load", fitMap);
 window.addEventListener("resize", fitMap);
 
+if (map.complete) fitMap();
+
 viewport.addEventListener("pointerdown", e => {
   dragging = true;
   startX = e.clientX - x;
   startY = e.clientY - y;
-  viewport.setPointerCapture(e.pointerId);
 });
 
 viewport.addEventListener("pointermove", e => {
@@ -57,28 +79,22 @@ viewport.addEventListener("pointermove", e => {
   updateMap();
 });
 
-viewport.addEventListener("pointerup", e => {
-  dragging = false;
-  viewport.releasePointerCapture(e.pointerId);
-});
-
-viewport.addEventListener("pointercancel", () => {
-  dragging = false;
-});
+viewport.addEventListener("pointerup", () => dragging = false);
+viewport.addEventListener("pointercancel", () => dragging = false);
 
 viewport.addEventListener("wheel", e => {
   e.preventDefault();
 
   const oldScale = scale;
   const rect = viewport.getBoundingClientRect();
-  const mouseX = e.clientX - rect.left;
-  const mouseY = e.clientY - rect.top;
+  const cx = e.clientX - rect.left;
+  const cy = e.clientY - rect.top;
 
   scale += e.deltaY * -0.001;
-  scale = Math.min(Math.max(scale, 0.1), 10);
+  scale = Math.min(Math.max(scale, minScale), 10);
 
-  x = mouseX - ((mouseX - x) / oldScale) * scale;
-  y = mouseY - ((mouseY - y) / oldScale) * scale;
+  x = cx - ((cx - x) / oldScale) * scale;
+  y = cy - ((cy - y) / oldScale) * scale;
 
   updateMap();
 }, { passive: false });
@@ -87,44 +103,37 @@ document.querySelectorAll("[data-view]").forEach(btn => {
   btn.addEventListener("click", () => {
     const view = btn.dataset.view;
 
-    if (view === "full") fitMap();
+    if (view === "full") {
+      fitMap();
+      showToast("Full map");
+    }
+
     if (view === "gps") showLocation();
 
-    if (view === "susquehannock") zoomTo(-430, -420, 2.4, "Susquehannock ATV Trail");
-    if (view === "whiskey") zoomTo(-320, -980, 3, "Whiskey Springs ATV Trail");
-    if (view === "haneyville") zoomTo(-1050, -900, 3, "Haneyville ATV Trail");
-    if (view === "bloody") zoomTo(-620, -1200, 3, "Bloody Skillet ATV Trail");
+    if (view === "susquehannock") zoomToPercent(0.45, 0.42, 1.2, "Susquehannock ATV Trail");
+    if (view === "whiskey") zoomToPercent(0.35, 0.67, 1.5, "Whiskey Springs ATV Trail");
+    if (view === "haneyville") zoomToPercent(0.77, 0.66, 1.5, "Haneyville ATV Trail");
+    if (view === "bloody") zoomToPercent(0.37, 0.82, 1.5, "Bloody Skillet ATV Trail");
   });
 });
 
 document.querySelectorAll("[data-filter]").forEach(btn => {
   btn.addEventListener("click", () => {
-    showToast(`${btn.textContent} markers`);
+    showToast(btn.textContent + " markers");
   });
 });
 
 function showLocation() {
   if (!navigator.geolocation) {
-    showToast("GPS is not available on this phone");
+    showToast("GPS not available");
     return;
   }
 
   navigator.geolocation.getCurrentPosition(
-    pos => {
-      showToast("GPS found. Location is approximate on this image map.");
-      console.log("Latitude:", pos.coords.latitude);
-      console.log("Longitude:", pos.coords.longitude);
-    },
-    () => showToast("Allow location permission to use GPS"),
+    () => showToast("GPS found. Location is approximate."),
+    () => showToast("Allow location permission"),
     { enableHighAccuracy: true, timeout: 10000 }
   );
-}
-
-function showToast(msg) {
-  if (!toast) return;
-  toast.textContent = msg;
-  toast.classList.add("show");
-  setTimeout(() => toast.classList.remove("show"), 2500);
 }
 
 window.addEventListener("beforeinstallprompt", e => {
@@ -142,8 +151,4 @@ installBtn.addEventListener("click", async () => {
 
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("sw.js");
-}
-
-if (map.complete) {
-  fitMap();
 }
