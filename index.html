@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>PA ATV GPS Trail Map</title>
+  <meta name="theme-color" content="#14331f">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+  <header>
+    <div>
+      <strong>Northcentral Regional ATV Trail</strong>
+      <span>Offline GPS map • Compass • Trail info • Fuel • Camping</span>
+    </div>
+    <button id="installBtn" hidden>Install</button>
+  </header>
+
+  <main id="viewport" aria-label="Zoomable ATV trail map">
+    <div id="mapLayer">
+      <img id="map" src="map.jpg" alt="Northcentral Regional ATV Trail 2026 map">
+      <div id="markers"></div>
+      <div id="gpsDot" hidden><span></span></div>
+    </div>
+    <button id="compass" type="button" aria-label="Compass heading">🧭 --°</button>
+  </main>
+
+  <section id="panel" aria-label="Map controls">
+    <button data-view="full">Full Map</button>
+    <button data-view="gps">GPS On</button>
+    <button data-view="follow">Follow Me</button>
+    <button data-view="susquehannock">Susquehannock</button>
+    <button data-view="whiskey">Whiskey Springs</button>
+    <button data-view="haneyville">Haneyville</button>
+    <button data-view="bloody">Bloody Skillet</button>
+    <button data-action="nearest">Distance</button>
+    <button data-action="favorites">Favorites</button>
+    <button data-action="info">Trail Info</button>
+    <button data-filter="all">All Markers</button>
+    <button data-filter="gas">Gas</button>
+    <button data-filter="parking">Parking</button>
+    <button data-filter="camping">Camping</button>
+    <button data-filter="food">Food</button>
+    <button data-filter="off">Hide Markers</button>
+  </section>
+
+  <aside id="drawer" hidden>
+    <div id="drawerHeader">
+      <strong id="drawerTitle">Trail Info</strong>
+      <button id="drawerClose" type="button">×</button>
+    </div>
+    <div id="drawerBody"></div>
+  </aside>
+
+  <div id="status">GPS off</div>
+  <div id="toast"></div>
+</div>
+<script src="app.js?v=300"></script>
+</body>
+</html>
