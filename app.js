@@ -270,6 +270,6 @@ window.addEventListener("load", () => {
       splash.remove();
     }, 500);
 
-  }, 2500);
+  }, 1500);
 
 });
