@@ -1,12 +1,12 @@
 const viewport = document.getElementById("viewport");
 const mapLayer = document.getElementById("mapLayer");
 const map );
-const markerLayer = document.getElementById("markerLayer");
+const markerLant.getElementById("markerLayer");
 const gpsDot = document.getElementById("gpsDot");
 const installBtn = document.getElementById("installBtn");
 
 const trailBanner = document.getElementById("trailBanner");
-const infoCard = document.getElementById("infoCard");
+const infoCard = doc.getElementById("infoCard");
 const cardTitle = document.gntById("cardTitle");
 const cardText = document.getElementById("cardText");
 const closeCard = document.getElementById("closeCard");
