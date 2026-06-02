@@ -5,27 +5,15 @@ const toast = document.getElementById("toast");
 const installBtn = document.getElementById("installBtn");
 
 let scale = 1;
-let minScale = 1;
 let x = 0;
 let y = 0;
-
 let dragging = false;
 let startX = 0;
 let startY = 0;
-
 let deferredPrompt = null;
 
-function showToast(message) {
-  toast.textContent = message;
-  toast.classList.add("show");
-
-  clearTimeout(showToast.timer);
-  showToast.timer = setTimeout(() => {
-    toast.classList.remove("show");
-  }, 2500);
-}
-
 function updateMap() {
+  mapLayer.style.transformOrigin = "0 0";
   mapLayer.style.transform = `translate(${x}px, ${y}px) scale(${scale})`;
 }
 
@@ -35,57 +23,25 @@ function fitMap() {
   const iw = map.naturalWidth;
   const ih = map.naturalHeight;
 
-  if (!vw || !vh || !iw || !ih) return;
+  if (!iw || !ih) return;
 
-  minScale = Math.min(vw / iw, vh / ih);
-  scale = minScale;
-
+  scale = Math.min(vw / iw, vh / ih);
   x = (vw - iw * scale) / 2;
   y = (vh - ih * scale) / 2;
 
   updateMap();
-  showToast("Full map view");
 }
 
-function zoomAt(clientX, clientY, amount) {
-  const oldScale = scale;
-  const rect = viewport.getBoundingClientRect();
-
-  const px = clientX - rect.left;
-  const py = clientY - rect.top;
-
-  scale = Math.min(Math.max(scale * amount, minScale), minScale * 8);
-
-  x = px - ((px - x) / oldScale) * scale;
-  y = py - ((py - y) / oldScale) * scale;
-
-  updateMap();
-}
-
-function zoomToPercent(px, py, zoom, label) {
-  const vw = viewport.clientWidth;
-  const vh = viewport.clientHeight;
-  const iw = map.naturalWidth;
-  const ih = map.naturalHeight;
-
-  scale = minScale * zoom;
-
-  const mapX = iw * px;
-  const mapY = ih * py;
-
-  x = vw / 2 - mapX * scale;
-  y = vh / 2 - mapY * scale;
-
+function zoomTo(nx, ny, ns, label) {
+  scale = ns;
+  x = nx;
+  y = ny;
   updateMap();
   showToast(label);
 }
 
 map.addEventListener("load", fitMap);
 window.addEventListener("resize", fitMap);
-
-if (map.complete) {
-  setTimeout(fitMap, 200);
-}
 
 viewport.addEventListener("pointerdown", e => {
   dragging = true;
@@ -96,82 +52,54 @@ viewport.addEventListener("pointerdown", e => {
 
 viewport.addEventListener("pointermove", e => {
   if (!dragging) return;
-
   x = e.clientX - startX;
   y = e.clientY - startY;
-
   updateMap();
 });
 
 viewport.addEventListener("pointerup", e => {
   dragging = false;
-  try {
-    viewport.releasePointerCapture(e.pointerId);
-  } catch {}
+  viewport.releasePointerCapture(e.pointerId);
 });
 
 viewport.addEventListener("pointercancel", () => {
   dragging = false;
 });
 
-viewport.addEventListener("dblclick", e => {
-  zoomAt(e.clientX, e.clientY, 1.7);
-});
-
 viewport.addEventListener("wheel", e => {
   e.preventDefault();
-  zoomAt(e.clientX, e.clientY, e.deltaY < 0 ? 1.15 : 0.85);
+
+  const oldScale = scale;
+  const rect = viewport.getBoundingClientRect();
+  const mouseX = e.clientX - rect.left;
+  const mouseY = e.clientY - rect.top;
+
+  scale += e.deltaY * -0.001;
+  scale = Math.min(Math.max(scale, 0.1), 10);
+
+  x = mouseX - ((mouseX - x) / oldScale) * scale;
+  y = mouseY - ((mouseY - y) / oldScale) * scale;
+
+  updateMap();
 }, { passive: false });
 
-document.querySelectorAll("[data-view]").forEach(button => {
-  button.addEventListener("click", () => {
-    const view = button.dataset.view;
+document.querySelectorAll("[data-view]").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const view = btn.dataset.view;
 
-    if (view === "full") {
-      fitMap();
-    }
+    if (view === "full") fitMap();
+    if (view === "gps") showLocation();
 
-    if (view === "gps") {
-      showLocation();
-    }
-
-    if (view === "susquehannock") {
-      zoomToPercent(0.42, 0.45, 2.2, "Susquehannock ATV Trail");
-    }
-
-    if (view === "whiskey") {
-      zoomToPercent(0.55, 0.48, 2.2, "Whiskey Springs ATV Trail");
-    }
-
-    if (view === "haneyville") {
-      zoomToPercent(0.48, 0.56, 2.2, "Haneyville ATV Trail");
-    }
-
-    if (view === "bloody") {
-      zoomToPercent(0.58, 0.62, 2.2, "Bloody Skillet ATV Trail");
-    }
+    if (view === "susquehannock") zoomTo(-430, -420, 2.4, "Susquehannock ATV Trail");
+    if (view === "whiskey") zoomTo(-320, -980, 3, "Whiskey Springs ATV Trail");
+    if (view === "haneyville") zoomTo(-1050, -900, 3, "Haneyville ATV Trail");
+    if (view === "bloody") zoomTo(-620, -1200, 3, "Bloody Skillet ATV Trail");
   });
 });
 
-document.querySelectorAll("[data-filter]").forEach(button => {
-  button.addEventListener("click", () => {
-    const filter = button.dataset.filter;
-
-    document.querySelectorAll("[data-filter]").forEach(btn => {
-      btn.classList.remove("active");
-    });
-
-    button.classList.add("active");
-
-    document.querySelectorAll("[data-marker]").forEach(marker => {
-      if (filter === "all" || marker.dataset.marker === filter) {
-        marker.classList.add("show");
-      } else {
-        marker.classList.remove("show");
-      }
-    });
-
-    showToast(`${button.textContent.trim()} shown`);
+document.querySelectorAll("[data-filter]").forEach(btn => {
+  btn.addEventListener("click", () => {
+    showToast(`${btn.textContent} markers`);
   });
 });
 
@@ -181,57 +109,41 @@ function showLocation() {
     return;
   }
 
-  showToast("Checking location...");
-
   navigator.geolocation.getCurrentPosition(
-    position => {
-      const lat = position.coords.latitude.toFixed(5);
-      const lng = position.coords.longitude.toFixed(5);
-
-      alert(
-        "Your phone GPS location was found:\n\n" +
-        "Latitude: " + lat + "\n" +
-        "Longitude: " + lng + "\n\n" +
-        "This map is a picture, so GPS cannot place an exact dot until the image is calibrated."
-      );
+    pos => {
+      showToast("GPS found. Location is approximate on this image map.");
+      console.log("Latitude:", pos.coords.latitude);
+      console.log("Longitude:", pos.coords.longitude);
     },
-    () => {
-      showToast("Allow location permission to use GPS");
-    },
-    {
-      enableHighAccuracy: true,
-      timeout: 15000,
-      maximumAge: 0
-    }
+    () => showToast("Allow location permission to use GPS"),
+    { enableHighAccuracy: true, timeout: 10000 }
   );
 }
 
-window.addEventListener("beforeinstallprompt", event => {
-  event.preventDefault();
-  deferredPrompt = event;
-
-  if (installBtn) {
-    installBtn.hidden = false;
-  }
-});
-
-if (installBtn) {
-  installBtn.addEventListener("click", async () => {
-    if (!deferredPrompt) {
-      showToast("Use Chrome menu ⋮ then Add to Home screen");
-      return;
-    }
-
-    deferredPrompt.prompt();
-    await deferredPrompt.userChoice;
-
-    deferredPrompt = null;
-    installBtn.hidden = true;
-  });
+function showToast(msg) {
+  if (!toast) return;
+  toast.textContent = msg;
+  toast.classList.add("show");
+  setTimeout(() => toast.classList.remove("show"), 2500);
 }
 
+window.addEventListener("beforeinstallprompt", e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  installBtn.hidden = false;
+});
+
+installBtn.addEventListener("click", async () => {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  deferredPrompt = null;
+  installBtn.hidden = true;
+});
+
 if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("./sw.js");
-  });
+  navigator.serviceWorker.register("sw.js");
+}
+
+if (map.complete) {
+  fitMap();
 }
