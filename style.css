@@ -180,3 +180,42 @@ header span {
   background: #eee;
   font-size: 22px;
 }
+
+#splash{
+  position:fixed;
+  inset:0;
+  background:#14331f;
+  color:white;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  z-index:9999;
+}
+
+.splash-content{
+  text-align:center;
+}
+
+.splash-content h1{
+  margin:0;
+  font-size:28px;
+}
+
+.splash-content p{
+  margin:10px 0 20px;
+  opacity:.85;
+}
+
+.loader{
+  width:42px;
+  height:42px;
+  border:4px solid rgba(255,255,255,.3);
+  border-top:4px solid white;
+  border-radius:50%;
+  animation:spin 1s linear infinite;
+}
+
+@keyframes spin{
+  from{transform:rotate(0deg);}
+  to{transform:rotate(360deg);}
+}
