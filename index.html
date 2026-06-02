@@ -9,13 +9,7 @@
   <link rel="apple-touch-icon" href="icon-192.png" />
   <link rel="stylesheet" href="style.css" />
 </head>
-  <script>
-  if ("serviceWorker" in navigator) {
-    window.addEventListener("load", () => {
-      navigator.serviceWorker.register("./sw.js");
-    });
-  }
-  </script>
+
 <body>
   <div id="app">
     <header>
@@ -28,19 +22,31 @@
 
     <main id="viewport">
       <div id="mapLayer">
-        <img id="map" src="map.jpg" alt="Northcentral Regional ATV Trail 2026 map" draggable="false" />
-        <div id="markers"></div>
-        <div id="gpsDot" hidden><span></span></div>
+        <img id="map" src="map.jpg" alt="Northcentral Regional ATV Trail Map" />
+
+        <!-- Markers: move these by changing left/top percentages -->
+        <button class="marker gas" data-marker="gas" style="left:48%; top:42%;">⛽</button>
+        <button class="marker gas" data-marker="gas" style="left:62%; top:56%;">⛽</button>
+
+        <button class="marker parking" data-marker="parking" style="left:40%; top:50%;">🅿️</button>
+        <button class="marker parking" data-marker="parking" style="left:70%; top:61%;">🅿️</button>
+
+        <button class="marker camping" data-marker="camping" style="left:55%; top:68%;">⛺</button>
+        <button class="marker camping" data-marker="camping" style="left:35%; top:64%;">⛺</button>
       </div>
     </main>
 
-    <section id="panel">
+    <section class="controls">
       <button data-view="full">Full map</button>
       <button data-view="gps">My location</button>
       <button data-view="susquehannock">Susquehannock</button>
       <button data-view="whiskey">Whiskey Springs</button>
       <button data-view="haneyville">Haneyville</button>
       <button data-view="bloody">Bloody Skillet</button>
+    </section>
+
+    <section class="filters">
+      <button data-filter="all">All</button>
       <button data-filter="gas">Gas</button>
       <button data-filter="parking">Parking</button>
       <button data-filter="camping">Camping</button>
@@ -48,6 +54,7 @@
 
     <div id="toast"></div>
   </div>
+
   <script src="app.js"></script>
 </body>
 </html>
