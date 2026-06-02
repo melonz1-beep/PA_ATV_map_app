@@ -252,3 +252,24 @@ renderMarkers("hide");
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("sw.js").catch(() => {});
     }
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("sw.js").catch(() => {});
+}
+
+window.addEventListener("load", () => {
+
+  const splash = document.getElementById("splash");
+
+  if (!splash) return;
+
+  setTimeout(() => {
+
+    splash.style.opacity = "0";
+
+    setTimeout(() => {
+      splash.remove();
+    }, 500);
+
+  }, 2500);
+
+});
