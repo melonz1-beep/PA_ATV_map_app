@@ -262,13 +262,6 @@ document.querySelectorAll("[data-filter]").forEach(button => {
   button.addEventListener("click", () => {
     const filter = button.dataset.filter;
 
-    if (filter === "gas") showCard("⛽ Nearby Fuel", "Fuel markers are approximate and based on the DCNR map. Confirm hours before riding.");
-    if (filter === "parking") showCard("🅿️ Parking", "Parking markers show trail access or staging areas.");
-    if (filter === "camping") showCard("⛺ Camping", "Camping markers show camping areas or nearby state park camping.");
-    if (filter === "food") showCard("🍔 Food / Snacks", "Food, snack, and drink stops shown on the map.");
-    if (filter === "all") showCard("All Markers", "Showing gas, parking, camping, and food markers.");
-    if (filter === "hide") infoCard.hidden = true;
-
     renderMarkers(filter);
   });
 });
