@@ -1,108 +1,135 @@
 * {
   box-sizing: border-box;
-  }
+}
 
 html,
 body {
-margin: 0;
-height: 100%;
-overflow: hidden;
-font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+  font-family: Arial, sans-serif;
+  background: #111;
 }
 
 #app {
-height: 100vh;
-display: flex;
-flex-direction: column;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
 }
 
 header {
-background: #14331f;
-color: white;
-padding: 12px;
+  background: #14331f;
+  color: white;
+  padding: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 header strong {
-display: block;
-font-size: 1.3rem;
+  display: block;
+  font-size: 16px;
 }
 
 header span {
-opacity: 0.85;
+  display: block;
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+#installBtn {
+  background: #2e7d32;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
 }
 
 #viewport {
-flex: 1;
-position: relative;
-overflow: hidden;
-touch-action: none;
-background: #fff;
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  background: #000;
+  touch-action: none;
 }
 
 #mapLayer {
-position: absolute;
-left: 0;
-top: 0;
-transform-origin: 0 0;
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform-origin: 0 0;
 }
 
 #map {
-display: block;
-max-width: none;
-user-select: none;
-pointer-events: none;
+  display: block;
+  max-width: none;
+  user-select: none;
+  -webkit-user-drag: none;
+  pointer-events: none;
 }
 
-.controls,
-.filters {
-display: flex;
-gap: 8px;
-overflow-x: auto;
-padding: 10px;
-background: #102417;
+#markers {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
 }
 
-.controls button,
-.filters button {
-border: none;
-border-radius: 24px;
-padding: 12px 16px;
-background: #eef7ec;
-font-weight: bold;
-white-space: nowrap;
+#gpsDot {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #2196f3;
+  border: 3px solid white;
+  transform: translate(-50%, -50%);
+  z-index: 100;
 }
 
-.marker {
-position: absolute;
-width: 38px;
-height: 38px;
-border-radius: 50%;
-border: 2px solid white;
-background: white;
-display: none;
-transform: translate(-50%, -50%);
-z-index: 100;
+#gpsDot span {
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+  border: 2px solid rgba(33, 150, 243, 0.5);
 }
 
-.marker.show {
-display: flex;
-align-items: center;
-justify-content: center;
+#panel {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding: 10px;
+  background: #f4f4f4;
+  border-top: 1px solid #ddd;
+}
+
+#panel button {
+  white-space: nowrap;
+  padding: 10px 12px;
+  border: 1px solid #bbb;
+  border-radius: 6px;
+  background: white;
+  cursor: pointer;
+}
+
+#panel button:hover {
+  background: #eee;
 }
 
 #toast {
-position: fixed;
-bottom: 90px;
-left: 50%;
-transform: translateX(-50%);
-background: rgba(0,0,0,.8);
-color: white;
-padding: 10px 14px;
-border-radius: 20px;
-opacity: 0;
-transition: opacity .2s;
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0,0,0,.8);
+  color: white;
+  padding: 10px 16px;
+  border-radius: 8px;
+  opacity: 0;
+  transition: opacity .3s;
+  z-index: 1000;
 }
 
 #toast.show {
-opacity: 1;
+  opacity: 1;
 }
