@@ -1,66 +1,156 @@
 const viewport = document.getElementById("viewport");
 const mapLayer = document.getElementById("mapLayer");
 const map = document.getElementById("map");
-const toast = document.getElementById("toast");
+const markerLayer = document.getElementById("markerLayer");
 const gpsDot = document.getElementById("gpsDot");
 const installBtn = document.getElementById("installBtn");
-const infoPanel = document.getElementById("infoPanel");
-const infoTitle = document.getElementById("infoTitle");
-const infoText = document.getElementById("infoText");
-const navBtn = document.getElementById("navBtn");
-const favBtn = document.getElementById("favBtn");
-const closeInfo = document.getElementById("closeInfo");
 
-let scale = 1, minScale = 1, x = 0, y = 0;
+const trailBanner = document.getElementById("trailBanner");
+const infoCard = document.getElementById("infoCard");
+const cardTitle = document.getElementById("cardTitle");
+const cardText = document.getElementById("cardText");
+const closeCard = document.getElementById("closeCard");
+
+let scale = 1;
+let minScale = 1;
+let x = 0;
+let y = 0;
+
 let pointers = new Map();
-let lastDistance = 0, lastCenter = null;
-let lastTap = 0;
-let followGps = false;
+let lastDistance = 0;
+let lastCenter = null;
 let deferredPrompt = null;
-let selectedLocation = null;
 
-// Rough calibration for the DCNR map image. Use for general trail awareness only.
-const geoBounds = { west: -78.18, east: -77.30, north: 42.02, south: 40.98 };
-
-const trailInfo = {
-  susquehannock: { name: "Susquehannock ATV Trail", px: .45, py: .42, zoom: 1.3, text: "Susquehannock State Forest area. Use posted DCNR signs and current NRAT rules." },
-  whiskey: { name: "Whiskey Springs ATV Trail", px: .35, py: .67, zoom: 1.6, text: "Whiskey Springs trail area. Check season, permit, registration, insurance, and helmet requirements." },
-  haneyville: { name: "Haneyville ATV Trail", px: .77, py: .66, zoom: 1.6, text: "Haneyville trail area. Watch for legal connector routes and closed roads." },
-  bloody: { name: "Bloody Skillet ATV Trail", px: .37, py: .82, zoom: 1.6, text: "Bloody Skillet trail area. Stay on designated ATV routes only." }
-};
+const markers = [
+  { type: "gas", icon: "⛽", x: 47, y: 39, title: "Fuel Stop", text: "Fuel location shown on the DCNR ATV map." },
+  { type: "gas", icon: "⛽", x: 60, y: 54, title: "Fuel Stop", text: "Nearby fuel area. Confirm hours before riding." },
+  { type: "parking", icon: "🅿️", x: 43, y: 43, title: "Parking", text: "Parking or staging area shown on the map." },
+  { type: "parking", icon: "🅿️", x: 68, y: 62, title: "Parking", text: "Use marked parking areas for trail access." },
+  { type: "camping", icon: "⛺", x: 36, y: 66, title: "Camping", text: "Camping area or nearby state park camping." },
+  { type: "camping", icon: "⛺", x: 55, y: 68, title: "Camping", text: "Check campground availability and rules." },
+  { type: "food", icon: "🍔", x: 50, y: 41, title: "Food / Snacks", text: "Food, snack, or drink location shown on the map." },
+  { type: "food", icon: "🍔", x: 62, y: 56, title: "Food / Snacks", text: "Nearby food or drink stop. Confirm hours before riding." }
+];
 
 function updateMap() {
   mapLayer.style.transform = `translate(${x}px, ${y}px) scale(${scale})`;
 }
 
 function fitMap() {
-  const vw = viewport.clientWidth, vh = viewport.clientHeight;
-  const iw = map.naturalWidth, ih = map.naturalHeight;
+  const vw = viewport.clientWidth;
+  const vh = viewport.clientHeight;
+  const iw = map.naturalWidth;
+  const ih = map.naturalHeight;
+
   if (!vw || !vh || !iw || !ih) return;
+
   map.style.width = iw + "px";
   map.style.height = ih + "px";
   mapLayer.style.width = iw + "px";
   mapLayer.style.height = ih + "px";
+  markerLayer.style.width = iw + "px";
+  markerLayer.style.height = ih + "px";
+
   minScale = Math.min(vw / iw, vh / ih);
   scale = minScale;
+
   x = (vw - iw * scale) / 2;
   y = (vh - ih * scale) / 2;
+
   updateMap();
 }
 
-function showToast(message) {
-  toast.textContent = message;
-  toast.classList.add("show");
-  clearTimeout(showToast.timer);
-  showToast.timer = setTimeout(() => toast.classList.remove("show"), 2200);
+function zoomToMapPercent(px, py, zoomMultiplier, label) {
+  const vw = viewport.clientWidth;
+  const vh = viewport.clientHeight;
+  const iw = map.naturalWidth;
+  const ih = map.naturalHeight;
+
+  scale = minScale * zoomMultiplier;
+
+  x = vw / 2 - iw * px * scale;
+  y = vh / 2 - ih * py * scale;
+
+  updateMap();
+  showBanner(label);
 }
 
-function getDistance(a, b) { return Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY); }
-function getCenter(a, b) { return { x: (a.clientX + b.clientX) / 2, y: (a.clientY + b.clientY) / 2 }; }
+function gentleZoom(label) {
+  const vw = viewport.clientWidth;
+  const vh = viewport.clientHeight;
+  const oldScale = scale;
+  const newScale = Math.max(minScale * 2.2, scale * 1.15);
+
+  const cx = vw / 2;
+  const cy = vh / 2;
+
+  scale = Math.min(newScale, minScale * 5);
+
+  x = cx - ((cx - x) / oldScale) * scale;
+  y = cy - ((cy - y) / oldScale) * scale;
+
+  updateMap();
+  showBanner(label);
+}
+
+function showBanner(text) {
+  trailBanner.textContent = text;
+  trailBanner.style.display = "block";
+
+  clearTimeout(trailBanner.timer);
+  trailBanner.timer = setTimeout(() => {
+    trailBanner.style.display = "none";
+  }, 1800);
+}
+
+function showCard(title, text) {
+  cardTitle.textContent = title;
+  cardText.textContent = text;
+  infoCard.hidden = false;
+}
+
+closeCard.addEventListener("click", () => {
+  infoCard.hidden = true;
+});
+
+function renderMarkers(filter = "hide") {
+  markerLayer.innerHTML = "";
+
+  if (filter === "hide") return;
+
+  markers.forEach(m => {
+    if (filter !== "all" && m.type !== filter) return;
+
+    const btn = document.createElement("button");
+    btn.className = "marker";
+    btn.textContent = m.icon;
+    btn.style.left = m.x + "%";
+    btn.style.top = m.y + "%";
+
+    btn.addEventListener("click", e => {
+      e.stopPropagation();
+      showCard(m.title, m.text);
+    });
+
+    markerLayer.appendChild(btn);
+  });
+}
+
+function getDistance(a, b) {
+  return Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+}
+
+function getCenter(a, b) {
+  return {
+    x: (a.clientX + b.clientX) / 2,
+    y: (a.clientY + b.clientY) / 2
+  };
+}
 
 viewport.addEventListener("pointerdown", e => {
   viewport.setPointerCapture(e.pointerId);
   pointers.set(e.pointerId, e);
+
   if (pointers.size === 2) {
     const pts = Array.from(pointers.values());
     lastDistance = getDistance(pts[0], pts[1]);
@@ -70,147 +160,190 @@ viewport.addEventListener("pointerdown", e => {
 
 viewport.addEventListener("pointermove", e => {
   if (!pointers.has(e.pointerId)) return;
+
   const oldPointer = pointers.get(e.pointerId);
   pointers.set(e.pointerId, e);
+
   if (pointers.size === 1) {
     x += e.clientX - oldPointer.clientX;
     y += e.clientY - oldPointer.clientY;
     updateMap();
   }
+
   if (pointers.size === 2) {
     const pts = Array.from(pointers.values());
     const newDistance = getDistance(pts[0], pts[1]);
     const newCenter = getCenter(pts[0], pts[1]);
+
     const rect = viewport.getBoundingClientRect();
     const cx = newCenter.x - rect.left;
     const cy = newCenter.y - rect.top;
+
     const oldScale = scale;
+
     scale = scale * (newDistance / lastDistance);
-    scale = Math.min(Math.max(scale, minScale), 8);
+    scale = Math.min(Math.max(scale, minScale), minScale * 8);
+
     x = cx - ((cx - x) / oldScale) * scale;
     y = cy - ((cy - y) / oldScale) * scale;
+
     x += newCenter.x - lastCenter.x;
     y += newCenter.y - lastCenter.y;
+
     lastDistance = newDistance;
     lastCenter = newCenter;
+
     updateMap();
   }
 });
 
 viewport.addEventListener("pointerup", e => {
   pointers.delete(e.pointerId);
+});
+
+viewport.addEventListener("pointercancel", e => {
+  pointers.delete(e.pointerId);
+});
+
+let lastTap = 0;
+
+viewport.addEventListener("click", e => {
   const now = Date.now();
-  if (now - lastTap < 300) doubleTapZoom(e);
+
+  if (now - lastTap < 300) {
+    const rect = viewport.getBoundingClientRect();
+    const cx = e.clientX - rect.left;
+    const cy = e.clientY - rect.top;
+    const oldScale = scale;
+
+    scale = Math.min(scale * 1.7, minScale * 8);
+
+    x = cx - ((cx - x) / oldScale) * scale;
+    y = cy - ((cy - y) / oldScale) * scale;
+
+    updateMap();
+  }
+
   lastTap = now;
 });
-viewport.addEventListener("pointercancel", e => pointers.delete(e.pointerId));
-
-function doubleTapZoom(e) {
-  const rect = viewport.getBoundingClientRect();
-  const cx = e.clientX - rect.left;
-  const cy = e.clientY - rect.top;
-  const oldScale = scale;
-  const target = scale < minScale * 3 ? minScale * 3 : minScale;
-  scale = target;
-  x = cx - ((cx - x) / oldScale) * scale;
-  y = cy - ((cy - y) / oldScale) * scale;
-  updateMap();
-}
-
-function zoomTo(px, py, newScale, label) {
-  const vw = viewport.clientWidth, vh = viewport.clientHeight;
-  const iw = map.naturalWidth, ih = map.naturalHeight;
-  scale = Math.max(newScale, minScale);
-  x = vw / 2 - iw * px * scale;
-  y = vh / 2 - ih * py * scale;
-  updateMap();
-  showToast(label);
-}
-
-function showInfo(title, text, lat = null, lon = null) {
-  selectedLocation = lat && lon ? { lat, lon } : null;
-  infoTitle.textContent = title;
-  infoText.textContent = text;
-  navBtn.hidden = !selectedLocation;
-  infoPanel.hidden = false;
-}
-
-closeInfo.addEventListener("click", () => infoPanel.hidden = true);
-navBtn.addEventListener("click", () => {
-  if (!selectedLocation) return;
-  window.open(`https://www.google.com/maps/dir/?api=1&destination=${selectedLocation.lat},${selectedLocation.lon}`, "_blank");
-});
-favBtn.addEventListener("click", () => {
-  const favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
-  favorites.push({ title: infoTitle.textContent, text: infoText.textContent, saved: new Date().toISOString() });
-  localStorage.setItem("favorites", JSON.stringify(favorites));
-  showToast("Favorite saved");
-});
-
-function setFilter(filter) {
-  document.querySelectorAll("[data-filter]").forEach(b => b.classList.toggle("active", b.dataset.filter === filter));
-  document.querySelectorAll(".marker").forEach(marker => {
-    marker.classList.toggle("hidden", filter !== "all" && marker.dataset.marker !== filter);
-  });
-  showToast(filter === "all" ? "All markers" : `${filter} markers`);
-}
 
 document.querySelectorAll("[data-view]").forEach(button => {
   button.addEventListener("click", () => {
     const view = button.dataset.view;
-    if (view === "full") { fitMap(); showToast("Full map"); }
-    if (view === "gps") startGps();
-    if (trailInfo[view]) {
-      const t = trailInfo[view];
-      zoomTo(t.px, t.py, t.zoom, t.name);
-      showInfo(t.name, t.text);
+
+    if (view === "full") {
+      fitMap();
+      showBanner("Full map");
+    }
+
+    if (view === "gps") {
+      startGPS();
+    }
+
+    if (view === "susquehannock") {
+      zoomToMapPercent(0.46, 0.42, 2.1, "Susquehannock ATV Trail");
+    }
+
+    if (view === "whiskey") {
+      zoomToMapPercent(0.35, 0.68, 2.1, "Whiskey Springs ATV Trail");
+    }
+
+    if (view === "haneyville") {
+      zoomToMapPercent(0.78, 0.65, 2.1, "Haneyville ATV Trail");
+    }
+
+    if (view === "bloody") {
+      zoomToMapPercent(0.39, 0.83, 2.1, "Bloody Skillet ATV Trail");
     }
   });
 });
 
-document.querySelectorAll("[data-filter]").forEach(button => button.addEventListener("click", () => setFilter(button.dataset.filter)));
-document.querySelectorAll(".marker").forEach(marker => marker.addEventListener("click", e => {
-  e.stopPropagation();
-  showInfo(marker.dataset.name || "Map marker", "Approximate marker from the DCNR map. Verify exact location before riding.");
-}));
+document.querySelectorAll("[data-filter]").forEach(button => {
+  button.addEventListener("click", () => {
+    const filter = button.dataset.filter;
 
-function gpsToPixel(lat, lon) {
-  const iw = map.naturalWidth, ih = map.naturalHeight;
-  const px = (lon - geoBounds.west) / (geoBounds.east - geoBounds.west);
-  const py = (geoBounds.north - lat) / (geoBounds.north - geoBounds.south);
-  return { left: px * iw, top: py * ih, px, py };
+    if (filter === "gas") showCard("⛽ Nearby Fuel", "Fuel markers are approximate and based on the DCNR map. Confirm hours before riding.");
+    if (filter === "parking") showCard("🅿️ Parking", "Parking markers show trail access or staging areas.");
+    if (filter === "camping") showCard("⛺ Camping", "Camping markers show camping areas or nearby state park camping.");
+    if (filter === "food") showCard("🍔 Food / Snacks", "Food, snack, and drink stops shown on the map.");
+    if (filter === "all") showCard("All Markers", "Showing gas, parking, camping, and food markers.");
+    if (filter === "hide") infoCard.hidden = true;
+
+    renderMarkers(filter);
+  });
+});
+
+function startGPS() {
+  if (!navigator.geolocation) {
+    showBanner("GPS not available");
+    return;
+  }
+
+  showBanner("GPS starting");
+
+  navigator.geolocation.watchPosition(
+    pos => {
+      showBanner("GPS active");
+
+      const lat = pos.coords.latitude;
+      const lon = pos.coords.longitude;
+
+      placeApproxGpsDot(lat, lon);
+    },
+    () => {
+      showBanner("Allow GPS permission");
+    },
+    {
+      enableHighAccuracy: true,
+      maximumAge: 3000,
+      timeout: 12000
+    }
+  );
 }
 
-function startGps() {
-  if (!navigator.geolocation) { showToast("GPS is not available"); return; }
-  followGps = true;
-  showToast("Finding GPS...");
-  navigator.geolocation.watchPosition(pos => {
-    const { latitude, longitude, accuracy } = pos.coords;
-    const p = gpsToPixel(latitude, longitude);
-    gpsDot.hidden = false;
-    gpsDot.style.left = p.left + "px";
-    gpsDot.style.top = p.top + "px";
-    if (followGps) zoomTo(p.px, p.py, Math.max(scale, minScale * 3), "GPS location");
-    showInfo("My GPS Location", `Accuracy about ${Math.round(accuracy)} feet/meters depending on your phone. This blue dot is approximate on the image map.`, latitude, longitude);
-  }, () => showToast("Allow location permission"), { enableHighAccuracy: true, maximumAge: 3000, timeout: 12000 });
+function placeApproxGpsDot(lat, lon) {
+  const iw = map.naturalWidth;
+  const ih = map.naturalHeight;
+
+  /*
+    Approximate calibration for the DCNR NRAT map.
+    Fine-tuning may be needed after field testing.
+  */
+
+  const west = -78.25;
+  const east = -77.25;
+  const north = 42.08;
+  const south = 40.95;
+
+  const px = ((lon - west) / (east - west)) * iw;
+  const py = ((north - lat) / (north - south)) * ih;
+
+  gpsDot.style.left = px + "px";
+  gpsDot.style.top = py + "px";
+  gpsDot.hidden = false;
 }
 
 window.addEventListener("beforeinstallprompt", e => {
   e.preventDefault();
   deferredPrompt = e;
-  if (installBtn) installBtn.hidden = false;
+  installBtn.hidden = false;
 });
-if (installBtn) installBtn.addEventListener("click", async () => {
+
+installBtn.addEventListener("click", async () => {
   if (!deferredPrompt) return;
   deferredPrompt.prompt();
   deferredPrompt = null;
   installBtn.hidden = true;
 });
 
-if (map.complete) fitMap(); else map.addEventListener("load", fitMap);
-setFilter("all");
+if (map.complete) {
+  fitMap();
+} else {
+  map.addEventListener("load", fitMap);
+}
+
+renderMarkers("hide");
 
 if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("sw.js?v=400").catch(() => {});
+  navigator.serviceWorker.register("sw.js").catch(() => {});
 }
