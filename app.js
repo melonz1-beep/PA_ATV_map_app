@@ -393,7 +393,5 @@ installBtn?.addEventListener("click", async () => {
   installBtn.hidden = true;
 });
 
-if (map.complete) fitMap(); else map.addEventListener("load", fitMap);
-window.addEventListener("resize", fitMap);
+if (map.complete) fitMap(); else map.addEventListener("load", fitMap)
 startCompass();
-if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(()=>{});
