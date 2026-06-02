@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>PA ATV Map</title>
+  <meta name="theme-color" content="#14331f">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="stylesheet" href="style.css?v=400">
+</head>
+<body>
+<div id="app">
+  <header>
+    <div>
+      <strong>Northcentral Regional ATV Trail</strong>
+      <span>Offline map • GPS • Trailheads • Fuel</span>
+    </div>
+    <button id="installBtn" hidden>Install</button>
+  </header>
+
+  <main id="viewport">
+    <div id="mapLayer">
+      <img id="map" src="map.jpg" alt="Northcentral Regional ATV Trail Map" draggable="false">
+
+      <button class="marker gas" data-marker="gas" data-name="Fuel near Coudersport" style="left:42%;top:39%;">⛽</button>
+      <button class="marker gas" data-marker="gas" data-name="Fuel near Galeton" style="left:62%;top:39%;">⛽</button>
+      <button class="marker gas" data-marker="gas" data-name="Fuel near Haneyville" style="left:57%;top:54%;">⛽</button>
+      <button class="marker gas" data-marker="gas" data-name="Fuel near Bloody Skillet" style="left:45%;top:60%;">⛽</button>
+
+      <button class="marker parking" data-marker="parking" data-name="Trail parking" style="left:39%;top:47%;">🅿️</button>
+      <button class="marker parking" data-marker="parking" data-name="Trail parking" style="left:50%;top:51%;">🅿️</button>
+      <button class="marker parking" data-marker="parking" data-name="Trail parking" style="left:58%;top:59%;">🅿️</button>
+      <button class="marker parking" data-marker="parking" data-name="Trail parking" style="left:70%;top:57%;">🅿️</button>
+
+      <button class="marker camping" data-marker="camping" data-name="Camping area" style="left:38%;top:58%;">⛺</button>
+      <button class="marker camping" data-marker="camping" data-name="Camping area" style="left:54%;top:62%;">⛺</button>
+      <button class="marker camping" data-marker="camping" data-name="Camping area" style="left:66%;top:49%;">⛺</button>
+
+      <button class="marker food" data-marker="food" data-name="Food / snacks" style="left:43%;top:41%;">🍔</button>
+      <button class="marker food" data-marker="food" data-name="Food / snacks" style="left:62%;top:41%;">🍔</button>
+      <button class="marker food" data-marker="food" data-name="Food / snacks" style="left:49%;top:59%;">🍔</button>
+
+      <div id="gpsDot" hidden><span></span></div>
+    </div>
+  </main>
+
+  <section id="toolbar" aria-label="Map controls">
+    <div class="buttonRow">
+      <button data-view="full">Full Map</button>
+      <button data-view="gps">GPS</button>
+      <button data-view="susquehannock">Susquehannock</button>
+      <button data-view="whiskey">Whiskey</button>
+      <button data-view="haneyville">Haneyville</button>
+    </div>
+    <div class="buttonRow">
+      <button data-view="bloody">Bloody Skillet</button>
+      <button data-filter="all">All</button>
+      <button data-filter="gas">Gas</button>
+      <button data-filter="parking">Parking</button>
+      <button data-filter="camping">Camping</button>
+      <button data-filter="food">Food</button>
+    </div>
+  </section>
+
+  <div id="infoPanel" hidden>
+    <button id="closeInfo">×</button>
+    <h2 id="infoTitle"></h2>
+    <p id="infoText"></p>
+    <button id="navBtn" hidden>Navigate with Google Maps</button>
+    <button id="favBtn">⭐ Save Favorite</button>
+  </div>
+
+  <div id="toast"></div>
+</div>
+<script src="app.js?v=400"></script>
+</body>
+</html>
