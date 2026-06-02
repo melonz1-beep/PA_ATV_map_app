@@ -1,0 +1,97 @@
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  font-family: Arial, sans-serif;
+  background: #000;
+}
+
+#app {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+header {
+  background: #14331f;
+  color: white;
+  padding: 12px 16px;
+  flex: 0 0 auto;
+}
+
+header strong,
+header span {
+  display: block;
+}
+
+header span {
+  font-size: 13px;
+  opacity: 0.85;
+}
+
+#viewport {
+  flex: 1 1 auto;
+  position: relative;
+  overflow: hidden;
+  background: #000;
+  touch-action: none;
+}
+
+#mapLayer {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform-origin: 0 0;
+  will-change: transform;
+}
+
+#map {
+  display: block;
+  max-width: none;
+  user-select: none;
+  -webkit-user-drag: none;
+  touch-action: none;
+}
+
+#panel {
+  flex: 0 0 auto;
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 10px;
+  background: #0d2617;
+  z-index: 10;
+}
+
+#panel button {
+  flex: 0 0 auto;
+  border: none;
+  border-radius: 999px;
+  padding: 12px 16px;
+  background: #eef8ec;
+  color: #14331f;
+  font-weight: bold;
+}
+
+#toast {
+  position: fixed;
+  bottom: 75px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0,0,0,.85);
+  color: white;
+  padding: 10px 16px;
+  border-radius: 8px;
+  opacity: 0;
+  transition: opacity .25s;
+  z-index: 99;
+}
+
+#toast.show {
+  opacity: 1;
+}
