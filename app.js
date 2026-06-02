@@ -1,31 +1,31 @@
 const viewport = document.getElementById("viewport");
 const mapLayer = document.getElementById("mapLayer");
-const map = document.getElementById("map");
+const map );
 const markerLayer = document.getElementById("markerLayer");
 const gpsDot = document.getElementById("gpsDot");
 const installBtn = document.getElementById("installBtn");
 
 const trailBanner = document.getElementById("trailBanner");
 const infoCard = document.getElementById("infoCard");
-const cardTitle = document.getElementById("cardTitle");
+const cardTitle = document.gntById("cardTitle");
 const cardText = document.getElementById("cardText");
 const closeCard = document.getElementById("closeCard");
 
 let scale = 1;
-let minScale = 1;
+let minS
 let x = 0;
 let y = 0;
 
 let pointers = new Map();
 let lastDistance = 0;
-let lastCenter = null;
+let lastCentell;
 let deferredPrompt = null;
 
 const markers = [
   { type: "gas", icon: "⛽", x: 47, y: 39, title: "Fuel Stop", text: "Fuel location shown on the DCNR ATV map." },
   { type: "gas", icon: "⛽", x: 60, y: 54, title: "Fuel Stop", text: "Nearby fuel area. Confirm hours before riding." },
   { type: "parking", icon: "🅿️", x: 43, y: 43, title: "Parking", text: "Parking or staging area shown on the map." },
-  { type: "parking", icon: "🅿️", x: 68, y: 62, title: "Parking", text: "Use marked parking areas for trail access." },
+  { type: 8, y: 62, title: "Parking", text: "Use marked parking areas for trail access." },
   { type: "camping", icon: "⛺", x: 36, y: 66, title: "Camping", text: "Camping area or nearby state park camping." },
   { type: "camping", icon: "⛺", x: 55, y: 68, title: "Camping", text: "Check campground availability and rules." },
   { type: "food", icon: "🍔", x: 50, y: 41, title: "Food / Snacks", text: "Food, snack, or drink location shown on the map." },
