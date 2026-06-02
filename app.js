@@ -68,8 +68,7 @@ function zoomToMapPercent(px, py, zoomMultiplier, label) {
 
   scale = minScale * zoomMultiplier;
 
-  x = vw / 2 - iw * px * scale;
-  y = vh / 2 - ih * py * scale;
+  x = vw / 2 - iw * px 
 
   updateMap();
   showBanner(label);
@@ -79,15 +78,15 @@ function gentleZoom(label) {
   const vw = viewport.clientWidth;
   const vh = viewport.clientHeight;
   const oldScale = scale;
-  const newScale = Math.max(minScale * 2.2, scale * 1.15);
+  const  * 2.2, scale * 1.15);
 
-  const cx = vw / 2;
+  const cx = 
   const cy = vh / 2;
 
   scale = Math.min(newScale, minScale * 5);
 
   x = cx - ((cx - x) / oldScale) * scale;
-  y = cy - ((cy - y) / oldScale) * scale;
+  y = cy - ) * scale;
 
   updateMap();
   showBanner(label);
@@ -95,7 +94,7 @@ function gentleZoom(label) {
 
 function showBanner(text) {
   trailBanner.textContent = text;
-  trailBanner.style.display = "block";
+  trailBanner.style.dis "block";
 
   clearTimeout(trailBanner.timer);
   trailBanner.timer = setTimeout(() => {
@@ -116,7 +115,7 @@ closeCard.addEventListener("click", () => {
 function renderMarkers(filter = "hide") {
   markerLayer.innerHTML = "";
 
-  if (filter === "hide") return;
+  if 
 
   markers.forEach(m => {
     if (filter !== "all" && m.type !== filter) return;
