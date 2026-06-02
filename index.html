@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>PA ATV Map</title>
+  <meta name="theme-color" content="#14331f" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="icon-192.png" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="app">
+    <header>
+      <div>
+        <strong>Northcentral Regional ATV Trail</strong>
+        <span>Offline map - GPS - Trailheads - Fuel</span>
+      </div>
+      <button id="installBtn" hidden>Install</button>
+    </header>
+
+    <main id="viewport">
+      <div id="mapLayer">
+        <img id="map" src="map.jpg" alt="Northcentral Regional ATV Trail 2026 map" draggable="false" />
+        <div id="markers"></div>
+        <div id="gpsDot" hidden><span></span></div>
+      </div>
+    </main>
+
+    <section id="panel">
+      <button data-view="full">Full map</button>
+      <button data-view="gps">My location</button>
+      <button data-view="susquehannock">Susquehannock</button>
+      <button data-view="whiskey">Whiskey Springs</button>
+      <button data-view="haneyville">Haneyville</button>
+      <button data-view="bloody">Bloody Skillet</button>
+      <button data-filter="gas">Gas</button>
+      <button data-filter="parking">Parking</button>
+      <button data-filter="camping">Camping</button>
+    </section>
+
+    <div id="toast"></div>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
