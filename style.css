@@ -1,138 +1,108 @@
 * {
   box-sizing: border-box;
-}
+  }
 
 html,
 body {
-  margin: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  font-family: system-ui, Arial, sans-serif;
-  background: #07180d;
+margin: 0;
+height: 100%;
+overflow: hidden;
+font-family: Arial, sans-serif;
 }
 
 #app {
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  background: #07180d;
+height: 100vh;
+display: flex;
+flex-direction: column;
 }
 
 header {
-  background: linear-gradient(135deg, #14331f, #0d2415);
-  color: white;
-  padding: 14px 18px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+background: #14331f;
+color: white;
+padding: 12px;
 }
 
 header strong {
-  display: block;
-  font-size: 20px;
+display: block;
+font-size: 1.3rem;
 }
 
 header span {
-  display: block;
-  opacity: 0.85;
-}
-
-#installBtn {
-  border: 0;
-  border-radius: 18px;
-  padding: 8px 14px;
-  background: #eef7ec;
-  font-weight: 700;
+opacity: 0.85;
 }
 
 #viewport {
-  flex: 1;
-  position: relative;
-  overflow: hidden;
-  background: #ffffff;
-  touch-action: none;
+flex: 1;
+position: relative;
+overflow: hidden;
+touch-action: none;
+background: #fff;
 }
 
 #mapLayer {
-  position: absolute;
-  left: 0;
-  top: 0;
-  transform-origin: 0 0;
+position: absolute;
+left: 0;
+top: 0;
+transform-origin: 0 0;
 }
 
 #map {
-  display: block;
-  max-width: none;
-  user-select: none;
-  -webkit-user-drag: none;
-  pointer-events: none;
+display: block;
+max-width: none;
+user-select: none;
+pointer-events: none;
 }
 
 .controls,
 .filters {
-  display: flex;
-  gap: 10px;
-  overflow-x: auto;
-  padding: 10px 14px;
-  background: #102417;
+display: flex;
+gap: 8px;
+overflow-x: auto;
+padding: 10px;
+background: #102417;
 }
 
 .controls button,
 .filters button {
-  flex: 0 0 auto;
-  border: 0;
-  border-radius: 28px;
-  padding: 14px 18px;
-  background: #eef7ec;
-  color: #102417;
-  font-weight: 800;
-  font-size: 15px;
-}
-
-.filters {
-  padding-top: 0;
-}
-
-.filters button.active {
-  background: #c8f7c5;
+border: none;
+border-radius: 24px;
+padding: 12px 16px;
+background: #eef7ec;
+font-weight: bold;
+white-space: nowrap;
 }
 
 .marker {
-  position: absolute;
-  transform: translate(-50%, -50%);
-  border: 2px solid white;
-  border-radius: 50%;
-  width: 36px;
-  height: 36px;
-  background: #ffffff;
-  font-size: 18px;
-  z-index: 5;
-  display: none;
-  box-shadow: 0 2px 8px rgba(0,0,0,.35);
+position: absolute;
+width: 38px;
+height: 38px;
+border-radius: 50%;
+border: 2px solid white;
+background: white;
+display: none;
+transform: translate(-50%, -50%);
+z-index: 100;
 }
 
 .marker.show {
-  display: block;
+display: flex;
+align-items: center;
+justify-content: center;
 }
 
 #toast {
-  position: fixed;
-  left: 50%;
-  bottom: 90px;
-  transform: translateX(-50%);
-  background: rgba(0,0,0,.85);
-  color: white;
-  padding: 10px 14px;
-  border-radius: 18px;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity .2s;
-  z-index: 20;
-  max-width: 90%;
-  text-align: center;
+position: fixed;
+bottom: 90px;
+left: 50%;
+transform: translateX(-50%);
+background: rgba(0,0,0,.8);
+color: white;
+padding: 10px 14px;
+border-radius: 20px;
+opacity: 0;
+transition: opacity .2s;
 }
 
 #toast.show {
-  opacity: 1;
+opacity: 1;
 }
