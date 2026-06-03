@@ -252,9 +252,7 @@ renderMarkers("hide");
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("sw.js").catch(() => {});
     }
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("sw.js").catch(() => {});
-}
+
 
 window.addEventListener("load", () => {
 
