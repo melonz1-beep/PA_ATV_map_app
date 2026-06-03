@@ -241,9 +241,28 @@ header span {
   from{transform:rotate(0deg);}
   to{transform:rotate(360deg);}
 }
-.splash-logo {
+.splash-logo {#app {
+  display: flex !important;
+  height: 100vh !important;
+}
+
+#viewport {
+  display: block !important;
+  flex: 1 1 auto !important;
+  min-height: 300px !important;
+  background: #000 !important;
+}
+
+#mapLayer {
+  display: block !important;
+}
+
+#map {
+  display: block !important;
+}
   width: 120px;
   height: 120px;
   border-radius: 26px;
   margin-bottom: 18px;
 }
+
