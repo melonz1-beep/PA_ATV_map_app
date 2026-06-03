@@ -19,8 +19,16 @@ let deferredPrompt = null;
 
 const markers = [];
 
+fun<link rel="stylesheet" href="style.css">
+</head>
+
+<body><link rel="stylesheet" href="style.css">
+</head>
+
+<body><link rel="stylesheet" href="style.css">
+</head>
+
 function updateMap() {
-  clampMap();
   mapLayer.style.transform = `translate(${x}px, ${y}px) scale(${scale})`;
 }
 function clampMap() {
