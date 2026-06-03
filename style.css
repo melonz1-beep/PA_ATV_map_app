@@ -241,3 +241,9 @@ header span {
   from{transform:rotate(0deg);}
   to{transform:rotate(360deg);}
 }
+.splash-logo {
+  width: 120px;
+  height: 120px;
+  border-radius: 26px;
+  margin-bottom: 18px;
+}
