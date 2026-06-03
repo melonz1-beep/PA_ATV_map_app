@@ -208,6 +208,56 @@ function startGPS() {
   );
 }
 
+function showEmergency() {
+  let locationText = "GPS location not available yet.";
+
+  if (!gpsDot.hidden && navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(pos => {
+      const lat = pos.coords.latitude.toFixed(6);
+      const lon = pos.coords.longitude.toFixed(6);
+
+      const message =
+        `Emergency Location:\nLatitude: ${lat}\nLongitude: ${lon}\nMap: https://maps.google.com/?q=${lat},${lon}`;
+
+      const card = `
+        🚨 Emergency Help
+
+        Call 911 for emergencies.
+
+        DCNR General Information:
+        717-787-2869
+
+        DCNR Snowmobile/ATV Registration:
+        1-866-545-2476
+
+        Your GPS:
+        ${lat}, ${lon}
+      `;
+
+      alert(card);
+
+      if (navigator.share) {
+        navigator.share({
+          title: "ATV Emergency Location",
+          text: message
+        });
+      }
+    });
+
+    return;
+  }
+
+  alert(
+    "🚨 Emergency Help\n\n" +
+    "Call 911 for emergencies.\n\n" +
+    "DCNR General Information:\n" +
+    "717-787-2869\n\n" +
+    "DCNR Snowmobile/ATV Registration:\n" +
+    "1-866-545-2476\n\n" +
+    locationText
+  );
+}
+
 function placeApproxGpsDot(lat, lon) {
   const iw = map.naturalWidth;
   const ih = map.naturalHeight;
@@ -224,6 +274,7 @@ function placeApproxGpsDot(lat, lon) {
   gpsDot.style.top = py + "px";
   gpsDot.hidden = false;
 }
+
 
 window.addEventListener("beforeinstallprompt", e => {
   e.preventDefault();
