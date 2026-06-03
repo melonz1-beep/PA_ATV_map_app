@@ -209,53 +209,49 @@ function startGPS() {
 }
 
 function showEmergency() {
-  let locationText = "GPS location not available yet.";
 
-  if (!gpsDot.hidden && navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(pos => {
-      const lat = pos.coords.latitude.toFixed(6);
-      const lon = pos.coords.longitude.toFixed(6);
+  cardTitle.textContent = "🚨 Emergency Information";
 
-      const message =
-        `Emergency Location:\nLatitude: ${lat}\nLongitude: ${lon}\nMap: https://maps.google.com/?q=${lat},${lon}`;
+  cardText.innerHTML = `
+    <strong>Emergency:</strong><br>
+    Call 911<br><br>
 
-      const card = `
-        🚨 Emergency Help
+    <strong>DCNR Information:</strong><br>
+    717-787-2869<br><br>
 
-        Call 911 for emergencies.
+    <strong>ATV Registration:</strong><br>
+    1-866-545-2476<br><br>
 
-        DCNR General Information:
-        717-787-2869
+    <strong>GPS:</strong><br>
+    Loading location...
+  `;
 
-        DCNR Snowmobile/ATV Registration:
-        1-866-545-2476
+  infoCard.hidden = false;
 
-        Your GPS:
-        ${lat}, ${lon}
-      `;
+  navigator.geolocation.getCurrentPosition(pos => {
 
-      alert(card);
+    const lat = pos.coords.latitude.toFixed(6);
+    const lon = pos.coords.longitude.toFixed(6);
 
-      if (navigator.share) {
-        navigator.share({
-          title: "ATV Emergency Location",
-          text: message
-        });
-      }
-    });
+    cardText.innerHTML = `
+      <strong>Emergency:</strong><br>
+      Call 911<br><br>
 
-    return;
-  }
+      <strong>DCNR Information:</strong><br>
+      717-787-2869<br><br>
 
-  alert(
-    "🚨 Emergency Help\n\n" +
-    "Call 911 for emergencies.\n\n" +
-    "DCNR General Information:\n" +
-    "717-787-2869\n\n" +
-    "DCNR Snowmobile/ATV Registration:\n" +
-    "1-866-545-2476\n\n" +
-    locationText
-  );
+      <strong>ATV Registration:</strong><br>
+      1-866-545-2476<br><br>
+
+      <strong>GPS Coordinates:</strong><br>
+      ${lat}, ${lon}<br><br>
+
+      <a href="https://maps.google.com/?q=${lat},${lon}" target="_blank">
+      Open in Google Maps
+      </a>
+    `;
+
+  });
 }
 
 function placeApproxGpsDot(lat, lon) {
