@@ -1,13 +1,20 @@
 {
-  "name": "PA ATV Map",
-  "short_name": "ATV Map",
-  "start_url": "./index.html",
-  "scope": "./",
+  "name": "PA ATV GPS Trail Map",
+  "short_name": "PA ATV Map",
+  "start_url": ".",
   "display": "standalone",
-  "background_color": "#000000",
+  "background_color": "#14331f",
   "theme_color": "#14331f",
   "icons": [
-    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" }
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
   ]
 }
