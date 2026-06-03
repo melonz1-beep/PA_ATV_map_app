@@ -1,4 +1,3 @@
-<button data-view="emergency">🚨 Emergency</button>
 <!doctype html>
 <html lang="en">
 <head>
@@ -47,6 +46,51 @@
       <button data-view="whiskey">Whiskey</button>
       <button data-view="haneyville">Haneyville</button>
       <button data-view="bloody">Bloody Skillet</button>
+      function showEmergency() {
+
+  cardTitle.textContent = "🚨 Emergency Information";
+
+  cardText.innerHTML = `
+    <strong>Emergency:</strong><br>
+    Call 911<br><br>
+
+    <strong>DCNR Information:</strong><br>
+    717-787-2869<br><br>
+
+    <strong>ATV Registration:</strong><br>
+    1-866-545-2476<br><br>
+
+    <strong>GPS:</strong><br>
+    Loading location...
+  `;
+
+  infoCard.hidden = false;
+
+  navigator.geolocation.getCurrentPosition(pos => {
+
+    const lat = pos.coords.latitude.toFixed(6);
+    const lon = pos.coords.longitude.toFixed(6);
+
+    cardText.innerHTML = `
+      <strong>Emergency:</strong><br>
+      Call 911<br><br>
+
+      <strong>DCNR Information:</strong><br>
+      717-787-2869<br><br>
+
+      <strong>ATV Registration:</strong><br>
+      1-866-545-2476<br><br>
+
+      <strong>GPS Coordinates:</strong><br>
+      ${lat}, ${lon}<br><br>
+
+      <a href="https://maps.google.com/?q=${lat},${lon}" target="_blank">
+      Open in Google Maps
+      </a>
+    `;
+
+  });
+}
     </div>
 
     <div class="row">
