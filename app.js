@@ -334,7 +334,7 @@ if ("serviceWorker" in navigator) {
 
   setTimeout(() => {
     if (splash) splash.style.display = "none";
-  }, 1100);
+  }, 2000);
 });
 
 
