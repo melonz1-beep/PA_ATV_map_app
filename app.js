@@ -20,8 +20,27 @@ let deferredPrompt = null;
 const markers = [];
 
 function updateMap() {
+  clampMap();
   mapLayer.style.transform = `translate(${x}px, ${y}px) scale(${scale})`;
 }
+function clampMap() {
+  const vw = viewport.clientWidth;
+  const vh = viewport.clientHeight;
+  const iw = map.naturalWidth * scale;
+  const ih = map.naturalHeight * scale;
+
+  if (iw <= vw) {
+    x = (vw - iw) / 2;
+  } else {
+    x = Math.min(0, Math.max(x, vw - iw));
+  }
+
+  if (ih <= vh) {
+    y = (vh - ih) / 2;
+  } else {
+    y = Math.min(0, Math.max(y, vh - ih));
+  }
+
 
 function fitMap() {
   const vw = viewport.clientWidth;
