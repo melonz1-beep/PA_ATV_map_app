@@ -164,7 +164,8 @@ document.querySelectorAll("[data-view]").forEach(button => {
       fitMap();
       showBanner("Full map");
     }
-
+    
+    if (view === "emergency") showEmergency();
     if (view === "gps") startGPS();
     if (view === "susquehannock") zoomToMapPercent(0.46, 0.42, 2.1, "Susquehannock ATV Trail");
     if (view === "whiskey") zoomToMapPercent(0.35, 0.68, 2.1, "Whiskey Springs ATV Trail");
