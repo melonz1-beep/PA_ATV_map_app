@@ -328,16 +328,14 @@ if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("sw.js").catch(() => {});
 }
 
-window.addEventListener("load", () => {
+
+  window.addEventListener("load", () => {
   const splash = document.getElementById("splash");
 
-  if (!splash) return;
-
   setTimeout(() => {
-    splash.style.opacity = "0";
-
-    setTimeout(() => {
-      splash.remove();
-    }, 500);
-  }, 2000);
+    if (splash) splash.style.display = "none";
+  }, 1100);
 });
+
+
+                        
